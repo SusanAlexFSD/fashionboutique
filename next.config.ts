@@ -6,16 +6,19 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
 
-  // ✅ Enable static export (needed for IONOS / FileZilla)
+
   output: "export",
 
-  // ✅ Required for static hosting
+ 
+  basePath: "/fashionboutique",
+
+
+  trailingSlash: true,
+
+ 
   images: {
     unoptimized: true,
   },
-
-  // ✅ Optional but recommended (fixes trailing routes like /about → /about.html)
-  trailingSlash: true,
 };
 
 export default nextConfig;

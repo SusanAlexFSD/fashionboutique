@@ -69,7 +69,9 @@ export async function getProducts(): Promise<Product[]> {
     FASHION_CATEGORIES.map(async (category) => {
       const res = await fetch(
         `https://dummyjson.com/products/category/${category}?limit=20`,
-        { cache: "no-store" }
+        {
+          cache: "force-cache",
+        }
       );
 
       if (!res.ok) {

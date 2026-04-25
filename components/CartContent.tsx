@@ -30,6 +30,21 @@ export default function CartContent() {
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <Link
+          href="/collections"
+          className="inline-flex w-fit items-center gap-2 rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 transition hover:bg-stone-100"
+        >
+          ← Continue Shopping
+        </Link>
+
+        {cart.length > 0 ? (
+          <p className="text-sm text-stone-500">
+            {cart.length} item{cart.length !== 1 ? "s" : ""} in your cart
+          </p>
+        ) : null}
+      </div>
+
       {cart.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-stone-300 bg-white p-12 text-center shadow-sm">
           <h2 className="text-2xl font-semibold text-stone-900">
@@ -37,8 +52,8 @@ export default function CartContent() {
           </h2>
 
           <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-stone-600">
-            Looks like you haven&apos;t added anything yet. Explore the collection
-            and find something you love.
+            Looks like you haven&apos;t added anything yet. Explore the
+            collection and find something you love.
           </p>
 
           <Link
@@ -74,7 +89,7 @@ export default function CartContent() {
                     </div>
 
                     <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="inline-flex items-center overflow-hidden rounded-xl border border-stone-300">
+                      <div className="inline-flex w-fit items-center overflow-hidden rounded-xl border border-stone-300">
                         <button
                           type="button"
                           onClick={() => decreaseQuantity(item.id)}
@@ -148,7 +163,9 @@ export default function CartContent() {
 
                 <div className="flex items-center justify-between">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? "Free" : `£${shipping.toFixed(2)}`}</span>
+                  <span>
+                    {shipping === 0 ? "Free" : `£${shipping.toFixed(2)}`}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between">

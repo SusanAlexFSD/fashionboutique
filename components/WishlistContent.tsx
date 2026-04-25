@@ -21,6 +21,8 @@ export default function WishlistContent() {
   const { addToCart } = useCart();
 
   const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
+  const [showShareToast, setShowShareToast] = useState(false);
+  const [showCartToast, setShowCartToast] = useState(false);
 
   useEffect(() => {
     async function loadProducts() {
@@ -31,6 +33,43 @@ export default function WishlistContent() {
     loadProducts();
   }, []);
 
+  function handleShareWishlist() {
+    const ids = wishlist.map((item) => item.id).join(",");
+
+    const baseUrl =
+      typeof window !== "undefined" ? window.location.origin : "";
+
+    const shareUrl = `${baseUrl}/fashionboutique/wishlist?items=${ids}`;
+
+    navigator.clipboard.writeText(shareUrl);
+
+    setShowShareToast(true);
+
+    window.setTimeout(() => {
+      setShowShareToast(false);
+    }, 2500);
+  }
+
+  function handleAddToCart(product: {
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+  }) {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
+
+    setShowCartToast(true);
+
+    window.setTimeout(() => {
+      setShowCartToast(false);
+    }, 2200);
+  }
+
   return (
     <>
       <section className="mx-auto max-w-7xl px-6 py-12">
@@ -40,8 +79,8 @@ export default function WishlistContent() {
               Saved Items
             </h2>
             <p className="mt-1 text-sm text-stone-600">
-              You have {wishlist.length} item{wishlist.length !== 1 ? "s" : ""} in
-              your wishlist.
+              You have {wishlist.length} item{wishlist.length !== 1 ? "s" : ""}{" "}
+              in your wishlist.
             </p>
           </div>
 
@@ -55,6 +94,7 @@ export default function WishlistContent() {
 
             <button
               type="button"
+              onClick={handleShareWishlist}
               className="rounded-xl bg-stone-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-stone-800"
             >
               Share Wishlist
@@ -118,14 +158,7 @@ export default function WishlistContent() {
                   <div className="mt-5 flex flex-col gap-3">
                     <button
                       type="button"
-                      onClick={() =>
-                        addToCart({
-                          id: product.id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.image,
-                        })
-                      }
+                      onClick={() => handleAddToCart(product)}
                       className="rounded-xl bg-stone-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-800"
                     >
                       Add to Cart
@@ -163,17 +196,25 @@ export default function WishlistContent() {
                   key={`recommended-${product.id}`}
                   className="overflow-hidden rounded-2xl border border-stone-200 bg-[#f7f1ea]"
                 >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-64 w-full object-cover"
-                  />
+                  <Link href={`/product/${product.id}`}>
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="h-64 w-full object-cover"
+                    />
+                  </Link>
 
                   <div className="p-4">
-                    <p className="text-sm text-stone-500">{product.category}</p>
-                    <h3 className="mt-1 text-lg font-semibold text-stone-900">
-                      {product.name}
-                    </h3>
+                    <p className="text-sm text-stone-500 capitalize">
+                      {product.category}
+                    </p>
+
+                    <Link href={`/product/${product.id}`}>
+                      <h3 className="mt-1 text-lg font-semibold text-stone-900 hover:text-stone-700">
+                        {product.name}
+                      </h3>
+                    </Link>
+
                     <p className="mt-2 text-base font-medium text-stone-800">
                       £{product.price.toFixed(2)}
                     </p>
@@ -201,6 +242,26 @@ export default function WishlistContent() {
           </div>
         </div>
       </section>
+
+      {showShareToast ? (
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl border border-stone-200 bg-white px-5 py-4 shadow-lg">
+          <p className="text-sm font-semibold text-stone-900">
+            Wishlist link copied
+          </p>
+          <p className="mt-1 text-sm text-stone-600">
+            You can now share your saved items.
+          </p>
+        </div>
+      ) : null}
+
+      {showCartToast ? (
+        <div className="fixed bottom-24 right-6 z-50 rounded-2xl border border-stone-200 bg-white px-5 py-4 shadow-lg">
+          <p className="text-sm font-semibold text-stone-900">Added to cart</p>
+          <p className="mt-1 text-sm text-stone-600">
+            Item added successfully.
+          </p>
+        </div>
+      ) : null}
     </>
   );
 }

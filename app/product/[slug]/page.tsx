@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProducts } from "@/lib/api";
 import ProductActions from "@/components/ProductActions";
@@ -9,11 +10,19 @@ type ProductPageProps = {
   }>;
 };
 
+export async function generateStaticParams() {
+  const products = await getProducts();
+
+  return products.map((product) => ({
+    slug: String(product.id),
+  }));
+}
+
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const products = await getProducts();
 
-  const product = products.find((item) => item.id === slug);
+  const product = products.find((item) => String(item.id) === slug);
 
   if (!product) {
     notFound();
@@ -26,8 +35,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <main className="min-h-screen bg-[#f7f1ea]">
       <section className="mx-auto max-w-7xl px-6 py-12">
-        <div className="mb-8 text-sm text-stone-500">
-          Home / Collections / {product.name}
+        <div className="mb-8 flex flex-wrap items-center gap-2 text-sm text-stone-500">
+          <Link href="/" className="transition hover:text-stone-800">
+            Home
+          </Link>
+          <span>/</span>
+          <Link href="/collections" className="transition hover:text-stone-800">
+            Collections
+          </Link>
+          <span>/</span>
+          <span className="text-stone-700">{product.name}</span>
         </div>
 
         <div className="grid gap-10 lg:grid-cols-2">
@@ -86,6 +103,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <h2 className="text-lg font-semibold text-stone-900">
                 Product Details
               </h2>
+
               <ul className="mt-4 space-y-2 text-sm leading-6 text-stone-700">
                 <li>Soft premium fabric for everyday comfort</li>
                 <li>Thoughtfully designed for a flattering fit</li>
